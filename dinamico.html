@@ -1,0 +1,168 @@
+<html>
+	<head>
+	</head>
+	<body>
+	<script language= "javascript">
+	 var m ;
+	 var mat=null;
+	function armarmatriz(){	
+		m =document.getElementById("n").value;
+        var t= document.getElementById("tablaA");
+		for(i=0;i<1;i++){
+            var f=t.insertRow(-1);
+			for(j=0;j<m;j++){
+				var nid= ""+i+j;
+				var z=f.insertCell(-1);
+				var  CELDA="<input type=\"text\"";
+				CELDA=CELDA+"id=\""+nid+"\"";
+				CELDA=CELDA+"size=\"3\">";
+				z.innerHTML=CELDA;    
+			}  
+		}
+		x= document.getElementById("c");
+		x.innerHTML= "Ingrese los valores de las monedas";
+	}
+	function limpiarMatriz(){
+		var t= document.getElementById("tablaA");
+		for(i=t.rows.length-1; i>=0; i--){
+		t.deleteRow(i);
+		}
+	}
+	function capturarMatriz(n){  
+        mat= new Array(1);
+        for(i=0;i<1;i++){
+            mat[i]= new Array(n);
+            for(j=0;j<n;j++){
+                var temp=document.getElementById(""+i+j).value;
+                mat[i][j]=Number(temp);
+			}	
+		}
+		return mat;
+	}
+	function creaMatriz(n,v, g){
+		n =n+1;
+		v=v+1;
+		var c = new Array(n);
+		for(i=0; i<n ; i++){
+			c[i]= new Array(v);
+		}
+		for(i=0; i<v; i++){
+			c[0][i]= i;
+		} 
+		
+		for(i=0; i<n;i++){
+			c[i][0]= g;
+		}
+		return c;
+	}	
+ 	function creaArreglo(n){
+		var a = new Array(n);
+		mat=capturarMatriz(n);
+		for(i=1; i<(n+1) ; i++){
+			a[i]= mat[0][i-1];
+		}
+		return a;	
+	}
+	function min(a , b){
+		if (a<b) {
+			return a;
+		}else if (a>b){
+			return b;
+		}else{
+			return a;
+		}
+	}
+	function minCon(a , b , d){
+		if (a<b) {
+			return a;
+		}else if(a>b){
+			b=b.substring(1)
+			return  "1:"+ d + " " +  b;
+		}else{
+			return  "1:"+ d + " " +  a;
+		}
+	}
+	function dibujaMatriz(c, n , v , tabla){	
+		n = n+1;
+		v=v+1;
+        var t= document.getElementById(tabla);
+		for(i=0;i<n;i++){
+            var f=t.insertRow(-1);
+			for(j=0;j<v;j++){
+				var z=f.insertCell(-1);
+				var  CELDA="<input type=\"text\"";
+				CELDA=CELDA+"value=\""+ c[i][j] +"\"";
+				CELDA=CELDA+"size=\"20\">";
+				z.innerHTML=CELDA;    
+			}  
+		}
+		
+	}
+	function darCambio(){
+		var x= document.getElementById("n");
+		var n= parseInt(x.value);
+		var x = document.getElementById("v");
+		var v = parseInt(x.value);
+		var c = creaMatriz(n,v, 0);	
+		var d = creaArreglo(n)
+		//alert(c);
+		//alert(d);
+		for(i=1; i<n+1; i++){
+			for(j=1; j <v+1; j++){
+				if(i==1 && j< d[i]){
+					c[i][j] = 0;
+				}else{
+					if(i==1){	
+						c[i][j] = 1 + c[1][j-d[i]];
+					}else{
+						if(j<d[i]){
+							c[i][j] = c[(i-1)][j];
+						}else{
+							c[i][j] = min(c[(i-1)][j] , 1 + c[i][(j-d[i])]);
+						}
+					}
+				}
+			}	
+		}
+		dibujaMatriz(c, n ,v, "tablaB");
+		var c = creaMatriz(n,v,".");
+		for(i=1; i<n+1; i++){
+			for(j=1; j <v+1; j++){
+				if(i==1 && j< d[i]){
+					c[i][j] = "inf";
+				}else{
+					if(i==1){	
+						c[i][j] = "1:"+d[i] +" " + c[1][j-d[i]];
+					}else{
+						if(j<d[i]){
+							c[i][j] = c[(i-1)][j];
+						}else{
+							c[i][j] = minCon(c[(i-1)][j] , 1 + c[i][(j-d[i])], d[i]);
+						}
+					}
+				}
+			}	
+		}
+		dibujaMatriz(c, n ,v, "tablaC");
+		var x= document.getElementById("separador");
+		x.innerHTML= "CONCATENANDO...";
+	}
+	</script>
+	<H1 ALIGN=JUSTIFY>Dar cambio </H1>
+	<div> Numero de monedas </div>
+	<input id ="n" type ="text" value="" >
+	<div id ="f"> </div>
+	<input type="button" id="Armar Matriz" value="Ingresar" onclick="limpiarMatriz();armarmatriz();"></input>
+	<div id="c"> </div>
+	<table id="tablaA">
+	</table>
+	<div>Ingrese vueltas(1-30) </div>
+	<input id ="v" type ="text" value=""></input><br>
+	<input type= "button" onclick= "darCambio()" id="boton" value="Calcular"><br>
+	<table id="tablaB">
+	</table>
+	<div id="separador"> </div>
+	<table id="tablaC">
+	</table>
+	</body>
+</html>	
